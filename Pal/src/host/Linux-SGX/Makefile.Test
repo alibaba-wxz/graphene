@@ -1,12 +1,2 @@
 SGX_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 include $(SGX_DIR)/Makefile.manifest
-
-ifeq ($(SGX_RUN),1)
-
-expand_target = $(foreach t,$(filter-out manifest,$(1)),$(patsubst %.manifest,%,$(t)).token)
-
-else
-
-expand_target = $(1) $(call expand_target_to_sig_sgx,$(1))
-
-endif
