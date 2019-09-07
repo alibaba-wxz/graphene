@@ -50,8 +50,6 @@ default: all
 
 RUNTIME_DIR = $(CURDIR)/../../Runtime
 
-export PAL_LOADER = $(RUNTIME_DIR)/pal-$(PAL_HOST)
-
 .PHONY: all
 all: $(target) $(call expand_target_to_sig,$(target)) $(call expand_target_to_sgx,$(target)) $(call expand_target_to_token,$(target)) $(preloads)
 
@@ -66,7 +64,6 @@ manifest_rules = \
 	-e 's:\$$(RA_CLIENT_SPID):$(RA_CLIENT_SPID):g' \
 	-e 's:\$$(RA_CLIENT_KEY):$(RA_CLIENT_KEY):g' \
 	-e 's:\$$(RA_CLIENT_LINKABLE):$(if $(RA_CLIENT_LINKABLE),$(RA_CLIENT_LINKABLE),0):g' \
-	$(extra_rules)
 
 ../csu/user_shared_start.o ../csu/user_start.o: ../csu/user_start.S
 	$(MAKE) -C $(dir $@) $(notdir $@)
@@ -100,6 +97,7 @@ else
 $(preloads) $(executables):
 endif
 
+export PAL_LOADER = $(RUNTIME_DIR)/pal-$(PAL_HOST)
 export PYTHONPATH=../../Scripts
 
 .PHONY: regression
