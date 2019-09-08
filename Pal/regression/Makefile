@@ -48,7 +48,11 @@ pal_lib = ../../Runtime/libpal-$(PAL_HOST).so
 RUNTIME_DIR = $(CURDIR)/../../Runtime
 
 .PHONY: all
+ifeq ($(findstring x86_64,$(SYS))$(findstring linux,$(SYS)),x86_64linux)
 all: $(target) $(call expand_target_to_sig,$(target)) $(call expand_target_to_sgx,$(target)) $(call expand_target_to_token,$(target)) $(preloads)
+else
+all:
+endif
 
 # To enable tests for remote attestation, please provide RA_CLIENT_SPID and RA_CLIENT_KEY
 # in the environment variables.
@@ -67,7 +71,6 @@ manifest_rules = \
 
 CFLAGS-AvxDisable += -mavx
 
-ifeq ($(findstring x86_64,$(SYS))$(findstring linux,$(SYS)),x86_64linux)
 LDLIBS-preloads = ../csu/user_shared_start.o $(graphene_lib) $(pal_lib)
 $(preloads): CFLAGS += -shared -fPIC
 $(preloads): LDLIBS = $(LDLIBS-preloads)
@@ -88,11 +91,6 @@ include $(wildcard *.d)
 
 $(graphene_lib): .lib/host_endian.h
 	$(MAKE) -C ../lib target=$(abspath .lib)/
-
-else
-.IGNORE: $(preloads) $(executables)
-$(preloads) $(executables):
-endif
 
 export PAL_LOADER = $(RUNTIME_DIR)/pal-$(PAL_HOST)
 export PYTHONPATH=../../Scripts
