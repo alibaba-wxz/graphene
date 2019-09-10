@@ -4,7 +4,8 @@ include Makefile.am
 ias_cert_url ?= https://software.intel.com/sites/default/files/managed/7b/de/RK_PUB.zip
 ias_cert_zip = quote/$(notdir $(ias_cert_url))
 
-CFLAGS	+= -I. -Iinclude -I../.. -I../../../include -I../../../lib -Isgx-driver
+CFLAGS	+= -I. -Iinclude -I../.. -I../../../include  -I../../../include/pal \
+	-I../../../include/host/Linux-SGX -I../../../lib -Isgx-driver
 ASFLAGS += -I. -I../.. -I../../../include
 
 host_files = libpal-Linux-SGX.a pal-sgx debugger/sgx_gdb.so pal.map generated_offsets.py

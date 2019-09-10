@@ -20,7 +20,8 @@ OBJ_DIR = $(HOST_DIR)/.obj
 
 include host/$(PAL_HOST)/Makefile.am
 
-CFLAGS	+= -I. -I../include -I$(HOST_DIR) -I../lib
+CFLAGS	+= -I. -I../include -I../include/pal -I../include/$(HOST_DIR) \
+	-I$(HOST_DIR) -I../lib
 
 # Build Targets:
 #     (1) Host-specific targets are in "host/{Host Name}".
