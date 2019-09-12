@@ -10,6 +10,7 @@ preloads = \
 
 executables = \
 	..Bootstrap \
+	Attestation \
 	AtomicMath \
 	AvxDisable \
 	Bootstrap \
@@ -70,6 +71,9 @@ manifest_rules = \
 	$(MAKE) -C $(dir $@) $(notdir $@)
 
 CFLAGS-AvxDisable += -mavx
+
+# work around: File.manifest.template has strange reference.
+../regression/File: | File
 
 LDLIBS-preloads = ../csu/user_shared_start.o $(graphene_lib) $(pal_lib)
 $(preloads): CFLAGS += -shared -fPIC
