@@ -72,8 +72,10 @@ manifest_rules = \
 
 CFLAGS-AvxDisable += -mavx
 
-# work around: File.manifest.template has strange reference.
+# work around: File.manifest.template has strange reference
+# to ../regression/File
 ../regression/File: | File
+	@true
 
 LDLIBS-preloads = ../csu/user_shared_start.o $(graphene_lib) $(pal_lib)
 $(preloads): CFLAGS += -shared -fPIC
