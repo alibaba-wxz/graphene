@@ -5,8 +5,9 @@ ifeq ($(findstring x86_64,$(SYS))$(findstring linux,$(SYS)),x86_64linux)
 files_to_build += user_start.o user_shared_start.o
 endif
 
-.PHONY: all
+.PHONY: all test
 all: $(files_to_build)
+test:
 
 user_start.o: user_start.S
 	$(call cmd,as_o_S)
