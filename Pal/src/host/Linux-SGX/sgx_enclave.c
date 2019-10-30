@@ -276,11 +276,11 @@ static int sock_getopt(int fd, struct sockopt * opt)
     return 0;
 }
 
-static int sgx_ocall_sock_listen(void * pms)
+static int sgx_ocall_listen(void * pms)
 {
-    ms_ocall_sock_listen_t * ms = (ms_ocall_sock_listen_t *) pms;
+    ms_ocall_listen_t * ms = (ms_ocall_listen_t *) pms;
     int ret, fd;
-    ODEBUG(OCALL_SOCK_LISTEN, ms);
+    ODEBUG(OCALL_LISTEN, ms);
 
     ret = INLINE_SYSCALL(socket, 3, ms->ms_domain,
                          ms->ms_type|SOCK_CLOEXEC,
@@ -329,11 +329,11 @@ err:
     return ret;
 }
 
-static int sgx_ocall_sock_accept(void * pms)
+static int sgx_ocall_accept(void * pms)
 {
-    ms_ocall_sock_accept_t * ms = (ms_ocall_sock_accept_t *) pms;
+    ms_ocall_accept_t * ms = (ms_ocall_accept_t *) pms;
     int ret, fd;
-    ODEBUG(OCALL_SOCK_ACCEPT, ms);
+    ODEBUG(OCALL_ACCEPT, ms);
     socklen_t addrlen = ms->ms_addrlen;
 
     ret = INLINE_SYSCALL(accept4, 4, ms->ms_sockfd, ms->ms_addr,
@@ -355,11 +355,11 @@ err:
     return ret;
 }
 
-static int sgx_ocall_sock_connect(void * pms)
+static int sgx_ocall_connect(void * pms)
 {
-    ms_ocall_sock_connect_t * ms = (ms_ocall_sock_connect_t *) pms;
+    ms_ocall_connect_t * ms = (ms_ocall_connect_t *) pms;
     int ret, fd;
-    ODEBUG(OCALL_SOCK_CONNECT, ms);
+    ODEBUG(OCALL_CONNECT, ms);
 
     ret = INLINE_SYSCALL(socket, 3, ms->ms_domain,
                          ms->ms_type|SOCK_CLOEXEC,
@@ -417,11 +417,11 @@ err:
     return ret;
 }
 
-static int sgx_ocall_sock_recv(void * pms)
+static int sgx_ocall_recv(void * pms)
 {
-    ms_ocall_sock_recv_t * ms = (ms_ocall_sock_recv_t *) pms;
+    ms_ocall_recv_t * ms = (ms_ocall_recv_t *) pms;
     int ret;
-    ODEBUG(OCALL_SOCK_RECV, ms);
+    ODEBUG(OCALL_RECV, ms);
     struct sockaddr * addr = ms->ms_addr;
     socklen_t addrlen = ms->ms_addr ? ms->ms_addrlen : 0;
 
@@ -458,11 +458,11 @@ static int sgx_ocall_sock_recv(void * pms)
     return ret;
 }
 
-static int sgx_ocall_sock_send(void * pms)
+static int sgx_ocall_send(void * pms)
 {
-    ms_ocall_sock_send_t * ms = (ms_ocall_sock_send_t *) pms;
+    ms_ocall_send_t * ms = (ms_ocall_send_t *) pms;
     int ret;
-    ODEBUG(OCALL_SOCK_SEND, ms);
+    ODEBUG(OCALL_SEND, ms);
     const struct sockaddr * addr = ms->ms_addr;
     socklen_t addrlen = ms->ms_addr ? ms->ms_addrlen : 0;
     struct sockaddr_in mcast_addr;
@@ -492,21 +492,21 @@ static int sgx_ocall_sock_send(void * pms)
     return ret;
 }
 
-static int sgx_ocall_sock_setopt(void * pms)
+static int sgx_ocall_setsockopt(void * pms)
 {
-    ms_ocall_sock_setopt_t * ms = (ms_ocall_sock_setopt_t *) pms;
+    ms_ocall_setsockopt_t * ms = (ms_ocall_setsockopt_t *) pms;
     int ret;
-    ODEBUG(OCALL_SOCK_SETOPT, ms);
+    ODEBUG(OCALL_SETSOCKOPT, ms);
     ret = INLINE_SYSCALL(setsockopt, 5,
                          ms->ms_sockfd, ms->ms_level, ms->ms_optname,
                          ms->ms_optval, ms->ms_optlen);
     return ret;
 }
 
-static int sgx_ocall_sock_shutdown(void * pms)
+static int sgx_ocall_shutdown(void * pms)
 {
-    ms_ocall_sock_shutdown_t * ms = (ms_ocall_sock_shutdown_t *) pms;
-    ODEBUG(OCALL_SOCK_SHUTDOWN, ms);
+    ms_ocall_shutdown_t * ms = (ms_ocall_shutdown_t *) pms;
+    ODEBUG(OCALL_SHUTDOWN, ms);
     INLINE_SYSCALL(shutdown, 2, ms->ms_sockfd, ms->ms_how);
     return 0;
 }
