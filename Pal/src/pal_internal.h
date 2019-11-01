@@ -120,6 +120,8 @@ struct handle_ops {
     /* 'rename' is used to change name of a stream, or reset its share
        option */
     int (*rename) (PAL_HANDLE handle, const char * type, const char * uri);
+
+    int (*flock) (PAL_HANDLE handle, int cmd, unsigned long arg);
 };
 
 extern const struct handle_ops * pal_handle_ops [];
@@ -278,6 +280,7 @@ int64_t _DkStreamRead (PAL_HANDLE handle, uint64_t offset, uint64_t count,
                        void * buf, char * addr, int addrlen);
 int64_t _DkStreamWrite (PAL_HANDLE handle, uint64_t offset, uint64_t count,
                         const void * buf, const char * addr, int addrlen);
+int64_t _DkStreamFlock (PAL_HANDLE handle, PAL_NUM cmd, PAL_NUM arg);
 int _DkStreamAttributesQuery (const char * uri, PAL_STREAM_ATTR * attr);
 int _DkStreamAttributesQueryByHandle (PAL_HANDLE hdl, PAL_STREAM_ATTR * attr);
 int _DkStreamMap (PAL_HANDLE handle, void ** addr, int prot, uint64_t offset,

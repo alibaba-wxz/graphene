@@ -341,6 +341,9 @@ PAL_NUM
 DkStreamWrite (PAL_HANDLE handle, PAL_NUM offset, PAL_NUM count,
                PAL_PTR buffer, PAL_STR dest);
 
+PAL_NUM
+DkStreamFlock (PAL_HANDLE handle, PAL_NUM cmd, PAL_NUM arg);
+
 #define PAL_DELETE_RD       01
 #define PAL_DELETE_WR       02
 

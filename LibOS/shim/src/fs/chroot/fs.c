@@ -1251,6 +1251,18 @@ out:
     return ret;
 }
 
+static int chroot_fcntl(struct shim_handle * hdl, int cmd, unsigned long arg)
+{
+    if (cmd != F_SETLK && cmd != F_SETLKW && cmd != F_GETLK)
+        return -EINVAL;
+
+    PAL_NUM pal_ret = DkStreamFlock(hdl->pal_handle, cmd, arg);
+    if (pal_ret == 0)
+        return -PAL_ERRNO;
+
+    return 0;
+}
+
 static int chroot_rename(struct shim_dentry* old, struct shim_dentry* new) {
     int ret;
 
@@ -1328,6 +1340,7 @@ struct shim_fs_ops chroot_fs_ops = {
         .checkpoint  = &chroot_checkpoint,
         .migrate     = &chroot_migrate,
         .poll        = &chroot_poll,
+        .fcntl       = &chroot_fcntl,
     };
 
 struct shim_d_ops chroot_d_ops = {

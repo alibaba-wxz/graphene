@@ -101,6 +101,7 @@ struct shim_fs_ops {
     /* checkpoint/migrate the filesystem */
     ssize_t (*checkpoint) (void ** checkpoint, void * mount_data);
     int (*migrate) (void * checkpoint, void ** mount_data);
+    int (*fcntl)(struct shim_handle * hdl, int cmd, unsigned long arg);
 };
 
 #define DENTRY_VALID        0x0001  /* this dentry is verified to be valid */

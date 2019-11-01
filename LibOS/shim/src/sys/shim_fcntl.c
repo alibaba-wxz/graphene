@@ -155,9 +155,6 @@ int shim_do_fcntl(int fd, int cmd, unsigned long arg) {
          *   is held by another process, this call returns -1 and sets errno to
          *   EACCES or EAGAIN.
          */
-        case F_SETLK:
-            ret = -ENOSYS;
-            break;
 
         /* F_SETLKW (struct flock *)
          *   As for F_SETLK, but if a conflicting lock is held on the file,
@@ -166,9 +163,6 @@ int shim_do_fcntl(int fd, int cmd, unsigned long arg) {
          *   has returned) returns immediately (with return value -1 and errno
          *   set to EINTR; see signal(7)).
          */
-        case F_SETLKW:
-            ret = -ENOSYS;
-            break;
 
         /* F_GETLK (struct flock *)
          *   On input to this call, lock describes a lock we would like to place
@@ -180,8 +174,16 @@ int shim_do_fcntl(int fd, int cmd, unsigned long arg) {
          *   l_whence, l_start, and l_len fields of lock and sets l_pid to be
          *   the PID of the process holding that lock.
          */
+        case F_SETLK:
+        case F_SETLKW:
         case F_GETLK:
             ret = -ENOSYS;
+            if (hdl->fs && hdl->fs->fs_ops && hdl->fs->fs_ops->fcntl) {
+                ret = hdl->fs->fs_ops->fcntl(hdl, cmd, arg);
+            } else {
+                debug("fcntl(cmd[%d]) is null, fs_type:%s.\n", cmd, hdl->fs ? hdl->fs->type : "none");
+            }
+
             break;
 
         /* F_SETOWN (int)
