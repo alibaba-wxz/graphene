@@ -972,6 +972,41 @@ int ocall_poll(struct pollfd* fds, int nfds, int64_t timeout_us) {
     return retval;
 }
 
+int ocall_flock(int fd, int cmd, uint64_t arg) {
+    int retval = 0;
+    struct flock * lock = (struct flock*)arg;
+
+    if (cmd != F_SETLK && cmd != F_SETLKW && cmd != F_GETLK) {
+        return -EINVAL;
+    }
+
+    ms_ocall_fcntl_t * ms = sgx_alloc_on_ustack(sizeof(*ms));
+    if (!ms) {
+        sgx_reset_ustack();
+        return -EPERM;
+    }
+
+    ms->ms_fd = fd;
+    ms->ms_cmd = cmd;
+    ms->ms_flock = sgx_copy_to_ustack(lock, sizeof(struct flock));
+    if (!ms->ms_flock) {
+        sgx_reset_ustack();
+        return -EPERM;
+    }
+
+    retval = sgx_ocall(OCALL_FCNTL, ms);
+
+    if (retval == 0) {
+        if (!sgx_copy_to_enclave(lock, sizeof(struct flock), ms->ms_flock, sizeof(struct flock))) {
+            sgx_reset_ustack();
+            return -EPERM;
+        }
+    }
+
+    sgx_reset_ustack();
+    return retval;
+}
+
 int ocall_rename (const char * oldpath, const char * newpath)
 {
     int retval = 0;

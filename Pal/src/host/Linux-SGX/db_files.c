@@ -391,6 +391,16 @@ const char* file_getrealpath(PAL_HANDLE handle) {
     return handle->file.realpath;
 }
 
+/* 'flock' operation for file streams. */
+static int file_flock (PAL_HANDLE handle, int cmd, unsigned long arg)
+{
+    int ret = ocall_flock(handle->file.fd, cmd, arg);
+    if (IS_ERR(ret))
+        return unix_to_pal_error(ERRNO(ret));
+
+    return ret;
+}
+
 struct handle_ops file_ops = {
     .getname        = &file_getname,
     .getrealpath    = &file_getrealpath,
@@ -406,6 +416,7 @@ struct handle_ops file_ops = {
     .attrquerybyhdl = &file_attrquerybyhdl,
     .attrsetbyhdl   = &file_attrsetbyhdl,
     .rename         = &file_rename,
+    .flock          = &file_flock,
 };
 
 /* 'open' operation for directory stream. Directory stream does not have a

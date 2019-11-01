@@ -293,6 +293,42 @@ DkStreamRead(PAL_HANDLE handle, PAL_NUM offset, PAL_NUM count, PAL_PTR buffer, P
     LEAVE_PAL_CALL_RETURN(ret);
 }
 
+int64_t _DkStreamFlock(PAL_HANDLE handle, PAL_NUM cmd, PAL_NUM arg) {
+    const struct handle_ops* ops = HANDLE_OPS(handle);
+
+    if (!ops)
+        return -PAL_ERROR_BADHANDLE;
+
+    int64_t ret;
+
+    if (!ops->flock)
+        return -PAL_ERROR_NOTSUPPORT;
+
+    ret = ops->flock(handle, cmd, arg);
+
+    return ret;
+}
+
+/*return value: 0:failed; 1:succeeded*/
+PAL_NUM
+DkStreamFlock(PAL_HANDLE handle, PAL_NUM cmd, PAL_NUM arg) {
+    ENTER_PAL_CALL(DkStreamRead);
+
+    if (!handle) {
+        _DkRaiseFailure(-PAL_ERROR_INVAL);
+        LEAVE_PAL_CALL_RETURN(0);
+    }
+
+    int64_t ret = _DkStreamFlock(handle, cmd, arg);
+
+    if (ret < 0) {
+        _DkRaiseFailure(-ret);
+        LEAVE_PAL_CALL_RETURN(PAL_FALSE);
+    }
+
+    LEAVE_PAL_CALL_RETURN(PAL_TRUE);
+}
+
 /* _DkStreamWrite for internal use, write to stream at absolute offset.
    The actual behavior of stream write is defined by handler */
 int64_t _DkStreamWrite(PAL_HANDLE handle, uint64_t offset, uint64_t count, const void* buf,

@@ -57,6 +57,7 @@ enum {
     OCALL_LOAD_DEBUG,
     OCALL_GET_ATTESTATION,
     OCALL_EVENTFD,
+    OCALL_FCNTL,
     OCALL_NR,
 };
 
@@ -239,6 +240,12 @@ typedef struct {
     int ms_nfds;
     int64_t ms_timeout_us;
 } ms_ocall_poll_t;
+
+typedef struct {
+    int ms_fd;
+    int ms_cmd;
+    struct flock* ms_flock;
+} ms_ocall_fcntl_t;
 
 typedef struct {
     const char * ms_oldpath;
