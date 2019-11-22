@@ -1120,7 +1120,7 @@ ssize_t shim_do_sendmmsg(int sockfd, struct mmsghdr* msg, size_t vlen, int flags
 static ssize_t do_recvmsg(int fd, struct iovec* bufs, int nbufs, int flags, struct sockaddr* addr,
                           socklen_t* addrlen) {
     /* TODO handle flags properly. For now, explicitly return an error. */
-    if (flags) {
+    if (flags & ~MSG_DONTWAIT) {
         debug("recvmsg()/recvmmsg()/recvfrom(): flags parameter unsupported.\n");
         return -EOPNOTSUPP;
     }
@@ -1182,6 +1182,12 @@ static ssize_t do_recvmsg(int fd, struct iovec* bufs, int nbufs, int flags, stru
         uri = __alloca(SOCK_URI_SIZE);
     }
 
+    bool set_no_wait = false;
+    if (flags & MSG_DONTWAIT && !(hdl->flags & O_NONBLOCK) &&
+        hdl->fs && hdl->fs->fs_ops && hdl->fs->fs_ops->setflags) {
+        set_no_wait = true;
+        hdl->fs->fs_ops->setflags(hdl, hdl->flags | O_NONBLOCK);
+    }
     unlock(&hdl->lock);
 
     bool address_received = false;
@@ -1237,7 +1243,12 @@ static ssize_t do_recvmsg(int fd, struct iovec* bufs, int nbufs, int flags, stru
         lock(&hdl->lock);
         goto out_locked;
     }
-    goto out;
+    if (!set_no_wait)
+        goto out;
+
+    lock(&hdl->lock);
+    if (set_no_wait && !(hdl->flags & O_NONBLOCK))
+        hdl->fs->fs_ops->setflags(hdl, hdl->flags);
 
 out_locked:
     if (ret < 0)
