@@ -664,7 +664,7 @@ sgx_ocall_fn_t ocall_table[OCALL_NR] = {
         [OCALL_DELETE]          = sgx_ocall_delete,
         [OCALL_LOAD_DEBUG]      = sgx_ocall_load_debug,
         [OCALL_GET_ATTESTATION] = sgx_ocall_get_attestation,
-        [OCALL_EVENTFD]          = sgx_ocall_eventfd,
+        [OCALL_EVENTFD]         = sgx_ocall_eventfd,
         [OCALL_FCNTL]           = sgx_ocall_fcntl,
     };
 
