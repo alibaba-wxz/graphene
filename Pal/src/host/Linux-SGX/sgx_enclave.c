@@ -663,7 +663,7 @@ sgx_ocall_fn_t ocall_table[OCALL_NR] = {
         [OCALL_GET_ATTESTATION]  = sgx_ocall_get_attestation,
         [OCALL_EVENTFD]          = sgx_ocall_eventfd,
         [OCALL_FCNTL]            = sgx_ocall_fcntl,
-};
+    };
 
 #define EDEBUG(code, ms) do {} while (0)
 
