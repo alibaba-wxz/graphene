@@ -540,9 +540,6 @@ int shim_do_fsync (int fd)
     if (!fs || !fs->fs_ops)
         goto out;
 
-    if (hdl->type == TYPE_DIR)
-        goto out;
-
     if (!fs->fs_ops->flush) {
         ret = -EROFS;
         goto out;
